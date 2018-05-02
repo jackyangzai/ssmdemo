@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wonder.dao.HistoryDao">
+
+    <select id="findDrugHistory" parameterType="map" resultType="map">
+        select
+            d.drug_no,
+            d.drug_name,
+            h.in_out_time,
+            h.flag,
+            u.loginname,
+            u.username,
+            u.status,
+            u.role,
+            h.changed_qty
+        from drug_history h,drug d,user_emp u
+        where
+            h.drug_no = d.drug_no
+            and h.username = u.loginname
+            and h.drug_no = #{drug_no}
+        order by ${sortField} ${sortOrder}
+    </select>
+</mapper>

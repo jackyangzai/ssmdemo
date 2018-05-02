@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>药品出入库</title>
+    <script src="../scripts/jquery-1.4.3.js" type="text/javascript"></script>
+    <!--MiniUI-->
+    <link href="../scripts/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />
+    <script src="../scripts/miniui/miniui.js" type="text/javascript"></script>
+    <script src="../scripts/boot.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>药品出入库操作</h1>
+<form id="form1" method="post">
+    <table>
+        <tr>
+            <td>药品编号</td>
+            <td><input name="DRUG_NO" class="mini-textbox" required="false" readonly/></td>
+        </tr>
+        <tr>
+            <td>药品名称</td>
+            <td><input name="DRUG_NAME" class="mini-textbox" required="true" readonly/></td>
+        </tr>
+        <tr>
+            <td>药品通用名</td>
+            <td><input name="DRUG_COM_NAME" class="mini-textbox" required="true" readonly/></td>
+        </tr>
+        <tr>
+            <td>药品分类</td>
+            <td><input name="DRUG_CATEGORY" class="mini-combobox" required="true" data="Category" readonly/></td>
+        </tr>
+        <!--<tr>-->
+            <!--<td>药品规格</td>-->
+            <!--<td><input name="DRUG_SPEC" class="mini-textbox" required="true"></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td>药品产地</td>-->
+            <!--<td><input name="DRUG_PRO_ADDRESS" class="mini-textbox" required="true"></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td>药品状态</td>-->
+            <!--<td><input name="DRUG_STATUS" class="mini-combobox" required="true" data="Status"></td>-->
+        <!--</tr>-->
+        <tr>
+            <td>药品库存数量</td>
+            <td><input id="DRUG_QTY" name="DRUG_QTY" class="mini-textbox" required="true" readonly/></td>
+        </tr>
+        <tr>
+            <td>药品出入库数量</td>
+            <td><input id="DRUG_QTY_CHANGE" name="DRUG_QTY_CHANGE" class="mini-textbox" required="true"/></td>
+        </tr>
+    </table>
+    <div style="padding:10px;">
+        <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+        <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+    </div>
+</form>
+<script type="text/javascript">
+    var Category = [{ id: 1, text: '西药' }, { id: 2, text: '中药'},{ id: 3, text: '中成药'}];
+//    var Status = [{ id:'Y',text:'启用'},{id:'N',text:'停用'}];
+    mini.parse();
+    var action;
+    var form = new mini.Form("form1");
+    function SetData(data) {
+        action = data.action;
+//        if (data.action == "add") {
+            //跨页面传递的数据对象，克隆后才可以安全使用
+            data = mini.clone(data);
+
+            $.ajax({
+                url: '../drug/searchOne.do?id='+ data.id,
+                cache: false,
+                success: function (text) {
+                    var o = mini.decode(text);
+                    form.setData(o);
+                    form.setChanged(false);
+
+//            onDeptChanged();
+//                    mini.getbyName("position").setValue(o.position);
+                }
+            });
+//        }else {
+//            action = "added";
+//        }
+    }
+
+    function onStatusRenderer(e) {
+        if(e.value=='Y') return '启用';
+        else return '停用';
+    }
+
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+    
+    function SaveData() {
+        var o = form.getData();
+
+        form.validate();
+        if (form.isValid() == false) return;
+
+        var json = mini.encode([o]);
+        if(action=='remove'){
+            var drug_qty = mini.get("DRUG_QTY").getValue();
+            var drug_qty_change = mini.get("DRUG_QTY_CHANGE").getValue();
+            if(drug_qty_change>drug_qty){
+                alert("出库数量比库存多，请修改出库数量");
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "../drug/inOutDrug.do",
+            type: 'post',
+            data: { data: json ,action:action},
+            cache: false,
+            success: function (text) {
+//                alert(text.state)
+                if(text.state==0){
+//                    console.log("出入库成功");
+                    alert("出入库成功");
+                    CloseWindow();
+                }else {
+                    alert("出入库失败");
+                };
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+                CloseWindow();
+            }
+        });
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+
+</script>
+</body>
+</html>

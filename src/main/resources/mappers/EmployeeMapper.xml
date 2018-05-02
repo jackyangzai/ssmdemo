@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wonder.dao.EmployeeDao">
+    <!-- resultType="map" 查询结果中元素的类型
+	是 map -->
+    <select id="findAllEmployees"
+            resultType="map">
+        select
+        empno as "id",
+        ename as "name",
+        salary as "salary"
+        from
+        t_emp
+    </select>
+
+    <select id="findEmpByName" parameterType="string" resultType="com.wonder.entity.User">
+        select
+            id,username,loginname,password,role,status
+        from
+            user_emp
+        where
+            loginname=#{loginname}
+        and status = 'Y'
+    </select>
+
+    <select id="findAllUser" parameterType="map" resultType="map">
+        select
+            id,username,loginname,password,role,status
+        from
+            user_emp
+        where loginname like concat(concat('%',#{key}),'%')
+        order by ${sortField} ${sortOrder}
+    </select>
+
+    <insert id="saveUserData" parameterType="map">
+        insert into user_emp(
+            id,loginname,username,password,role,status
+        )
+        values(
+            #{ID},#{LOGINNAME},#{USERNAME},#{PASSWORD},#{ROLE},#{STATUS}
+        )
+    </insert>
+
+    <delete id="deletUserData" parameterType="string">
+        delete user_emp where loginname = #{loginname}
+    </delete>
+
+    <update id="updateUserData" parameterType="map">
+        update user_emp
+        set
+            password = #{PASSWORD},
+            status = #{STATUS}
+        where
+            loginname = #{LOGINNAME}
+    </update>
+</mapper>

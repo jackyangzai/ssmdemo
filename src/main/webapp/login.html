@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页</title>
+    <script src="scripts/jquery-1.4.3.js" type="text/javascript"></script>
+    <!--MiniUI-->
+    <!--<link href="scripts/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />-->
+    <!--<script src="scripts/miniui/miniui.js" type="text/javascript"></script>-->
+    <script>
+        // scripts/login.js
+        // 登录页面中的脚本文件
+        $(function(){
+            //在页面加载完毕执行的脚本
+            //console.log("OK");
+            $('#login').click(loginAction);
+        });
+
+        function loginAction(){
+//            console.log('Login click');
+            //获取表单中的参数
+            //将表单参数利用AJAX发送到控制器
+            //检查控制器返回值,如果state==0成功转edit.html
+            var loginname=$('#count').val();
+            var password=$('#password').val();
+
+            console.log(loginname);
+            console.log(password);
+
+            var url='emp/login.do';
+            var param={loginname:loginname,
+                password:password};
+            console.log(param);
+            $.post(url, param, function(result){
+                if(result.state==0){
+                    console.log('登录成功!');
+                    console.log(result.data.role);
+                    var role = result.data.role;
+//                    调整到用户管理页面
+                    location.href='emp/list-grid.do?role='+role+'&user='+loginname;
+                }else{
+                    alert(result.message);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<h1>药库管理系统</h1>
+<div class='letter'>
+    用户名:&nbsp;<input type="text" name="" id="count" />
+</div>
+<div class='letter'>
+    密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="password" />
+</div>
+<div>
+    <input type="button" name="" id="login" value='&nbsp登&nbsp录&nbsp' tabindex='3'/>
+</div>
+</body>
+</html>

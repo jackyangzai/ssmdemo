@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wonder.dao.DrugDao">
+    <!--查询药品信息-->
+    <select id="searchDrugData" parameterType="map" resultType="map">
+        select
+            drug_no,drug_name,drug_com_name,drug_category,drug_pro_address,drug_spec,drug_status,drug_qty
+        from
+            drug
+        where drug_name like concat(concat('%',#{key}),'%')
+        order by ${sortField} ${sortOrder}
+    </select>
+
+    <!--查询一条药品信息-->
+    <select id="searchOneData" parameterType="string" resultType="map">
+        select
+            drug_no,drug_name,drug_com_name,drug_category,drug_pro_address,drug_spec,drug_status,drug_qty
+        from
+            drug
+        where
+            drug_name = #{drug_name}
+    </select>
+
+    <!--增加药品信息-->
+    <insert id="insertDrugData" parameterType="map">
+        INSERT INTO DRUG(
+        id,drug_no,drug_name,drug_com_name,drug_category,drug_pro_address,drug_spec,drug_status
+        )
+        VALUES(
+            drug_id_seq.nextval,drug_id_seq.nextval,
+            #{DRUG_NAME},#{DRUG_COM_NAME},#{DRUG_CATEGORY},
+            #{DRUG_PRO_ADDRESS},#{DRUG_SPEC},#{DRUG_STATUS}
+        )
+    </insert>
+
+    <!--修改药品信息-->
+    <insert id="updateDrugData" parameterType="map">
+        update drug
+        set
+            drug_name = #{DRUG_NAME},
+            drug_com_name = #{DRUG_COM_NAME},
+            drug_category = #{DRUG_CATEGORY},
+            drug_pro_address = #{DRUG_PRO_ADDRESS},
+            drug_spec = #{DRUG_SPEC},
+            drug_status = #{DRUG_STATUS}
+        where
+            drug_no = #{DRUG_NO}
+    </insert>
+
+    <!--删除药品信息-->
+    <delete id="deleteDrug" parameterType="string">
+        delete drug
+        where drug_no = #{drug_no}
+    </delete>
+
+    <!--库存查询-->
+    <select id="searchStock" resultType="map">
+        select
+            drug_name,drug_qty
+        from
+            drug
+    </select>
+
+    <!--药品入库-->
+    <update id="inDrug" parameterType="map">
+        update drug
+        set
+         drug_qty = #{DRUG_QTY} + #{DRUG_QTY_CHANGE}
+        where
+        drug_no = #{DRUG_NO}
+    </update>
+
+    <update id="outDrug" parameterType="map">
+        update drug
+        set
+        drug_qty = #{DRUG_QTY} - #{DRUG_QTY_CHANGE}
+        where
+        drug_no = #{DRUG_NO}
+    </update>
+
+    <insert id="insertHistory" >
+        insert into drug_history
+        values(
+        drug_id_seq.nextval,#{0},#{1},sysdate,#{2},#{3}
+        )
+    </insert>
+</mapper>
