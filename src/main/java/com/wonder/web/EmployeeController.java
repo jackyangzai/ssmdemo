@@ -91,7 +91,7 @@ public class EmployeeController {
         HashMap map = service.findAllUser(key,pageIndex,pageSize,sortField,sortOrder);
         JSONSerializer serializer = new JSONSerializer();
         String json = serializer.deepSerialize(map);
-//        System.out.println(json);
+        System.out.println(json);
         return json;
     }
 
