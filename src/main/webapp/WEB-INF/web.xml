@@ -9,8 +9,9 @@
     <servlet-name>springmvc</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
+      <!--<description></description>-->
       <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:spring-*.xml</param-value>
+      <param-value></param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -18,6 +19,44 @@
     <servlet-name>springmvc</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
+
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <servlet-name>springmvc</servlet-name>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>access</filter-name>
+    <filter-class>
+      com.wonder.web.AccessFilter
+    </filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>access</filter-name>
+    <url-pattern>/list.html</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>access</filter-name>
+    <url-pattern>/stock.html</url-pattern>
+  </filter-mapping>
+
+  <!-- 使用Listener初始化Spring 容器, 可以替代
+  DispatchServlet 初始化功能 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:spring-*.xml</param-value>
+  </context-param>
 
 
 

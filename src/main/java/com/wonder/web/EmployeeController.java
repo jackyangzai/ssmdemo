@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,13 +59,11 @@ public class EmployeeController {
      */
     @ResponseBody
     @RequestMapping(value = "/login.do")
-    public Object Login(String loginname,String password,HttpServletRequest request){
+    public Object Login(String loginname,String password,HttpServletRequest request,HttpServletResponse response){
         try {
             User user = service.Login(loginname,password);
             HttpSession session = request.getSession();
             session.setAttribute("loginUser",user);
-//            System.out.println(user);
-//            System.out.println(new JsonResult(user));
             return new JsonResult(user);
         } catch (Exception e) {
             e.printStackTrace();
