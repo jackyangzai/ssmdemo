@@ -15,9 +15,6 @@
 <html>
 <head>
     <title>用户列表</title>
-    <%--<script type="text/javascript">--%>
-        <%--var user = user;--%>
-    <%--</script>--%>
 </head>
 <body>
 <h1>菜单列表</h1>
